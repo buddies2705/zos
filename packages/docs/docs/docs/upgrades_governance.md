@@ -30,8 +30,6 @@ to register this contract, push it to the network and create a new upgradeable i
 previous sections:
 
 ```console
-zos add MyContract
-zos push -n ropsten
 zos create MyContract -n ropsten
 ```
 
@@ -41,25 +39,26 @@ decide when to upgrade any of its contracts.
 
 ## Transferring control
 
-Since we want to avoid having a single account with full control over our `MyContract` instance, we’ll transfer control
-of it to our multisig contract. To do this, we’ll use the `set-admin` command to yield control to the multisig account.
+Since we want to avoid having a single account with full control over our entire project which only contains `MyContract` instance for now, we'll transfer control of our project to our multisig contract. To do this, we'll use the `set-admin` command to yield control to the multisig account..
+
 
 ```console
-zos set-admin [MYCONTRACT_ADDRESS] [MULTISIG_ADDRESS] -y
+zos set-admin [MULTISIG_ADDRESS]
 ```
 
-> Please remember to replace `[MYCONTRACT_ADDRESS]` by the address of the upgradeable instance of `MyContract` we
-created above. Additionally, `[MULTISIG_ADDRESS]` should be replaced by the address of your multisig wallet contract.
+> Please remember `[MULTISIG_ADDRESS]` should be replaced by the address of your multisig wallet contract.
+Above command will change the ownership of the entire project to given `[MULTISIG_ADDRESS]` through [ProxyAdmin](https://docs.zeppelinos.org/docs/2.2.0/upgradeability_ProxyAdmin.html). Bear in mind that this could be an irreversible operation in case you specify an incorrect admin address.
 
-> The `-y` option is mandatory to carry out this action. Bear in mind that this could be an irreversible operation in
-case you specify an incorrect admin address.
+Now, if we want to upgrade any contract instance in the project to a new version, we'll need to perform the operation from the multisig contract. 
 
-Now, if we want to upgrade our `MyContract` instance to a new version, we’ll need to perform the operation from the
-multisig contract. Note that we have transferred only the ownership of our `MyContract` instance. If we had created
-more instances of `MyContract`, or of any other contract, they would still be under control of the deployer account.
+```console
+zos set-admin [MYCONTRACT_ADDRESS] [MULTISIG_ADDRESS]
+```
 
-The same applies to our ZeppelinOS app. This allows us to keep interacting with our project via the CLI, by creating new
-instances or registering new logic contracts, as we’ll be doing in the next step.
+
+> Note: Please remember to replace `[MYCONTRACT_ADDRESS]` by the address of your upgradable contract instance whom ownership you want to change.
+
+Remember `set-admin` command is an interactive command so in case you are not sure just type `zos set-admin`, it will help you to change ownership accordingly.
 
 ## Uploading a new version
 
